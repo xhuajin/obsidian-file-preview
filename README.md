@@ -4,12 +4,12 @@ Add file preview contents under file in file explorer.
 
 Overall screenshot
 
-![OverallScreenshot](./images/FilePreview1.png)
+![OverallScreenshot](./images/FilePreviewOverall.png)
 
 Detail screenshot
 
-![DetailScreenshot](./images/FilePreview2.png)
+![DetailScreenshot](./images/FilePreviewDetail.png)
 
 Setting screenshot
 
-![SettingScreenshot](./images/FilePreview3.png)
+![SettingScreenshot](./images/FilePreviewSetting.png)
