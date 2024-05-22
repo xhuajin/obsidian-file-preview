@@ -258,7 +258,7 @@ class FilePreviewSettingTab extends PluginSettingTab {
         })
       )
 
-    containerEl.createEl('h2', { text: 'Format settings' });
+    containerEl.createEl('h2', { text: 'Format preview contents' });
     
     new Setting(containerEl)
       .setName("Remove frontmatter")
