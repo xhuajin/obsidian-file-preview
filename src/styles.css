@@ -1,0 +1,34 @@
+.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title {
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title::before{
+  content: none;
+}
+
+.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title .tree-item-inner.nav-file-title-content {
+  flex: 1;
+  width: 100%;
+}
+
+.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title .tree-item-inner.nav-file-title-content {
+  font-weight: 500;
+}
+
+.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title.is-active .tree-item-inner.nav-file-details,
+.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title .tree-item-inner.nav-file-details {
+  display: -webkit-box;
+  white-space: normal;
+  word-break: break-all;
+  color: var(--nav-item-color);
+  font-size: var(--font-ui-smaller);
+  font-weight: 400;
+  -webkit-box-orient: vertical;
+}
+
+/* Adaptation plugin novel-word-count's Right-aligned */
+.file-preview-nav.novel-word-count--note-right .nav-files-container .nav-file-title::after {
+  margin-left: auto;
+}
