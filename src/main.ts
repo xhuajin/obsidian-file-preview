@@ -51,7 +51,7 @@ export default class FilePreview extends Plugin {
   previewContentsEl: HTMLElement[] = [];
 
   async onload() {
-    if (!Platform.isDesktop || this.app.isMobile) {
+    if (Platform.isMobile || this.app.isMobile) {
       return;
     }
     await this.loadSettings();
@@ -258,7 +258,7 @@ class FilePreviewSettingTab extends PluginSettingTab {
         })
       )
 
-    containerEl.createEl('h2', { text: 'Format preview contents' });
+    new Setting(containerEl).setName('Format preview contents').setHeading();
     
     new Setting(containerEl)
       .setName("Remove frontmatter")
