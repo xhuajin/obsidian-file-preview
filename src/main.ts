@@ -1,9 +1,6 @@
-import { App, Platform, Plugin, PluginSettingTab, Setting, TFile, TFolder, View, WorkspaceLeaf } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting, TFile, TFolder, View, WorkspaceLeaf } from 'obsidian';
 
 declare module 'obsidian' {
-  interface App {
-    isMobile: boolean;
-  }
   interface WorkspaceSidedock {
     containerEl: HTMLElement;
   }
@@ -51,9 +48,6 @@ export default class FilePreview extends Plugin {
   previewContentsEl: HTMLElement[] = [];
 
   async onload() {
-    if (Platform.isMobile || this.app.isMobile) {
-      return;
-    }
     await this.loadSettings();
     this.addSettingTab(new FilePreviewSettingTab(this.app, this));
     
