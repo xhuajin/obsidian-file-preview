@@ -92,7 +92,7 @@ export default class FilePreview extends Plugin {
     if (this.showpreviewBtn) {
       return;
     }
-    this.showpreviewBtn = fileNavHeader.createDiv({ cls: 'clickable-icon nav-action-button show-preview-button' });
+    this.showpreviewBtn = fileNavHeader.createDiv({ cls: 'clickable-icon nav-action-button show-preview-button', attr: { 'aria-label': 'Show/Hide preview contents' }});
     if (this.settings.ispreview) {
       setIcon(this.showpreviewBtn, 'captions-off');
     } else {
