@@ -18,6 +18,7 @@ interface FileItem {
 interface FilePreviewSettings {
   showpreview: boolean;
   lineClamp: number;
+  indents: number;
   previewcontentslength: string;
   ispreview: boolean;
   format: FormatSetting;
@@ -96,8 +97,8 @@ export default class FilePreview extends Plugin {
             text: formattedContents, 
             attr: { 
               class: 'tree-item-inner nav-file-title-content nav-file-details',
-              style: `-webkit-line-clamp: ${this.settings.lineClamp};`
-            } 
+              style: `-webkit-line-clamp: ${this.settings.lineClamp}; text-indent: ${this.settings.indents}em;`
+            }
           }));
         }
       });
@@ -188,6 +189,7 @@ export default class FilePreview extends Plugin {
 const DEFAULT_SETTINGS: FilePreviewSettings = {
   showpreview: true,
   lineClamp: 2,
+  indents: 0,
   previewcontentslength: '50',
   ispreview: false,
   format: {
@@ -251,6 +253,18 @@ class FilePreviewSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         })
       )
+
+    new Setting(containerEl)
+      .setName('Indents of the preview contents')
+      .setDesc('The indents of the preview contents')
+      .addSlider(slider => slider
+        .setLimits(0, 10, 1)
+        .setValue(this.plugin.settings.indents)
+        .onChange(async (value) => {
+          this.plugin.settings.indents = value;
+          await this.plugin.refreshPreviewContents();
+          await this.plugin.saveSettings();
+        }));
 
     new Setting(containerEl).setName('Format preview contents').setHeading();
     

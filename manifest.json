@@ -1,7 +1,7 @@
 {
 	"id": "file-preview",
 	"name": "File Preview",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"minAppVersion": "1.0.0",
 	"description": "Add file preview contents under file in file explorer.",
 	"author": "Huajin",
