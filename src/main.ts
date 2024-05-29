@@ -1,4 +1,4 @@
-import { App, Plugin, PluginSettingTab, Setting, TFile, TFolder, View, WorkspaceLeaf } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting, TFile, TFolder, View, WorkspaceLeaf, addIcon, setIcon } from 'obsidian';
 
 declare module 'obsidian' {
   interface WorkspaceSidedock {
@@ -46,6 +46,7 @@ export default class FilePreview extends Plugin {
   settings: FilePreviewSettings;
   fileExplorerView: FileExplorerView;
   fileNavEl: HTMLElement;
+  showpreviewBtn: HTMLElement;
   previewContentsEl: HTMLElement[] = [];
 
   async onload() {
@@ -56,10 +57,14 @@ export default class FilePreview extends Plugin {
     this.addRibbonIcon('refresh-cw', 'Refresh preview contents', async () => {
       this.refreshPreviewContents();
     });
+    
+    addIcon('subtitles-off', '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-captions-off"><path d="M10.5 5H19a2 2 0 0 1 2 2v8.5"/><path d="M17 11h-.5"/><path d="M19 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2"/><path d="m2 2 20 20"/><path d="M7 11h4"/><path d="M7 15h2.5"/></svg>')
+
     await this.saveSettings();
   }
 
   onunload() {
+    this.showpreviewBtn.remove();
     this.deletePreviewContents();
     this.saveSettings();
   }
@@ -69,6 +74,7 @@ export default class FilePreview extends Plugin {
       try {    
         this.fileExplorerView = await this.getFileExplorerView(); // 测试文件夹树是否加载
         this.fileNavEl = this.fileExplorerView.containerEl;
+        this.createShowPreviewButton(this.fileNavEl.querySelector('.nav-header > .nav-buttons-container') as HTMLElement);
         if (this.settings.showpreview) {
           await this.displayPreviewContents();
         }
@@ -79,6 +85,28 @@ export default class FilePreview extends Plugin {
         }, 1000);
       }
     });
+  }
+
+  public createShowPreviewButton(fileNavHeader: HTMLElement) {
+    if (this.showpreviewBtn) {
+      return;
+    }
+    this.showpreviewBtn = fileNavHeader.createDiv({ cls: 'clickable-icon nav-action-button show-preview-button' });
+    if (this.settings.ispreview) {
+      setIcon(this.showpreviewBtn, 'subtitles-off');
+    } else {
+      setIcon(this.showpreviewBtn, 'subtitles');
+    }
+    this.registerDomEvent(this.showpreviewBtn, 'click', async () => {
+      if (this.settings.ispreview) {
+        this.deletePreviewContents();
+        setIcon(this.showpreviewBtn, 'subtitles-off');
+      } else {
+        await this.displayPreviewContents();
+        setIcon(this.showpreviewBtn, 'subtitles');
+      }
+    });
+    this.saveSettings();
   }
 
   public async displayPreviewContents() {
