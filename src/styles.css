@@ -44,13 +44,20 @@
   box-shadow: 0 0 0 2px var(--background-modifier-border);
 }
 
-/* 标题 */
+.file-preview-show-img.tree-item.nav-file:has(> .nav-file-title.has-focus) {
+  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+}
+
 .file-preview-show-img.tree-item.nav-file .nav-file-title {
   flex: 2;
 }
 .file-preview-show-img.tree-item.nav-file .nav-file-title.is-active,
 .file-preview-show-img.tree-item.nav-file .nav-file-title:hover {
   background-color: unset;
+}
+
+body:not(.is-phone) .workspace-leaf.mod-active .file-preview-show-img.tree-item.nav-file .tree-item-self.has-focus {
+  box-shadow: unset;
 }
 
 .file-preview-show-img.tree-item.nav-file .tree-item-inner.nav-file-title-content {

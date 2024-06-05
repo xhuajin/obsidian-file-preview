@@ -1,6 +1,5 @@
 import { App, Plugin, PluginSettingTab, Setting, TFile, TFolder, View, WorkspaceLeaf, addIcon, normalizePath, setIcon } from 'obsidian';
-
-// import { resolve } from 'path';
+import { isAbsolute, relative, resolve } from 'path';
 
 declare module 'obsidian' {
   interface WorkspaceSidedock {
@@ -58,6 +57,8 @@ export default class FilePreview extends Plugin {
   fileNavEl: HTMLElement;
   showpreviewBtn: HTMLElement;
   previewContentsEl: HTMLElement[] = [];
+  imagePaths: string[];
+  ttl: number;
 
   async onload() {
     await this.loadSettings();
@@ -67,6 +68,12 @@ export default class FilePreview extends Plugin {
     this.addRibbonIcon('refresh-cw', 'Refresh preview contents', async () => {
       this.refreshPreviewContents();
     });
+
+    this.addRibbonIcon('trash', 'Delete preview contents', async () => {
+      this.deletePreviewContents();
+    });
+
+    this.ttl = 5;
     
     addIcon('captions', '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-captions"><rect width="18" height="14" x="3" y="5" rx="2" ry="2"/><path d="M7 15h4M15 15h2M7 11h2M13 11h4"/></svg>');
     addIcon('captions-off', '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-captions-off"><path d="M10.5 5H19a2 2 0 0 1 2 2v8.5"/><path d="M17 11h-.5"/><path d="M19 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2"/><path d="m2 2 20 20"/><path d="M7 11h4"/><path d="M7 15h2.5"/></svg>')
@@ -85,12 +92,18 @@ export default class FilePreview extends Plugin {
       try {
         this.fileExplorerView = await this.getFileExplorerView(); // 测试文件夹树是否加载
         this.fileNavEl = this.fileExplorerView.containerEl;
+        this.initImagePaths();
         this.createShowPreviewButton(this.fileNavEl.querySelector('.nav-header > .nav-buttons-container') as HTMLElement);
         if (this.settings.showpreview) {
-          await this.displayPreviewContents();
+          await this.refreshPreviewContents();
         }
       } catch (err) {
+        console.log(err);
+        if (this.ttl <= 0) {
+          return;
+        }
         // File Explorer pane may not be loaded yet
+        this.ttl -= 1;
         setTimeout(() => {
           this.initialize();
         }, 1000);
@@ -150,8 +163,8 @@ export default class FilePreview extends Plugin {
                 }
               })
               if (!imgpath.startsWith('http')) {
-                // console.log(resolve(imgpath));
-                imgpath = this.app.vault.adapter.getResourcePath(normalizePath(imgpath));
+                const absolutePath = this.imagePaths.find((path) => path.endsWith(imgpath)) || imgpath;
+                imgpath = this.app.vault.adapter.getResourcePath(normalizePath((absolutePath)));
               }
               fileimg.createEl('div', {
                 attr: {
@@ -273,6 +286,12 @@ export default class FilePreview extends Plugin {
     }
     
     return '';
+  }
+
+  public async initImagePaths() {
+    const allpaths = this.app.vault.getFiles().map((file) => file.path);
+    const imgpaths = allpaths.filter((path) => this.pathIsImg(path));
+    this.imagePaths = imgpaths;
   }
 
   public pathIsImg(path: string): boolean {
