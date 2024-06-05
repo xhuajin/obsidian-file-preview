@@ -1,4 +1,6 @@
-import { App, Plugin, PluginSettingTab, Setting, TFile, TFolder, View, WorkspaceLeaf, addIcon, setIcon } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting, TFile, TFolder, View, WorkspaceLeaf, addIcon, normalizePath, setIcon } from 'obsidian';
+
+// import { resolve } from 'path';
 
 declare module 'obsidian' {
   interface WorkspaceSidedock {
@@ -64,7 +66,6 @@ export default class FilePreview extends Plugin {
     await this.initialize();
     this.addRibbonIcon('refresh-cw', 'Refresh preview contents', async () => {
       this.refreshPreviewContents();
-      console.log(this.getFirstImgPath('asdfasdfa![[img.png|aaaa]]dsaf![](Pasted image 20240605153707.png)adsfasdf'));
     });
     
     addIcon('captions', '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-captions"><rect width="18" height="14" x="3" y="5" rx="2" ry="2"/><path d="M7 15h4M15 15h2M7 11h2M13 11h4"/></svg>');
@@ -149,13 +150,9 @@ export default class FilePreview extends Plugin {
                 }
               })
               if (!imgpath.startsWith('http')) {
-                imgpath = this.app.vault.adapter.getResourcePath(imgpath);
+                // console.log(resolve(imgpath));
+                imgpath = this.app.vault.adapter.getResourcePath(normalizePath(imgpath));
               }
-              // fileimg.createEl('img', {
-              //   attr: {
-              //     src: imgpath,
-              //   }
-              // });
               fileimg.createEl('div', {
                 attr: {
                   class: 'preview-img',
