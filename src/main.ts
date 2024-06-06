@@ -376,7 +376,7 @@ class FilePreviewSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Line clamp")
-      .setDesc("The number of lines to show in the preview contents. default: 2.")
+      .setDesc("The number of lines to show in the preview contents.(1 - 10, default: 2).")
       .addSlider(slider => slider
         .setLimits(1, 10, 1)
         .setValue(this.plugin.settings.lineClamp)
@@ -400,7 +400,7 @@ class FilePreviewSettingTab extends PluginSettingTab {
         }));
 
     new Setting(containerEl).setName('Format preview contents').setHeading();
-
+        
     new Setting(containerEl)
       .setName("Remove frontmatter")
       .setDesc("Remove frontmatter of the file.")

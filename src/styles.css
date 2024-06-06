@@ -31,35 +31,14 @@
   margin-left: auto;
 }
 
-/* img */
-
 .file-preview-show-img.tree-item.nav-file {
   display: flex;
   margin: 10px 0;
-}
-.file-preview-show-img.tree-item.nav-file:hover,
-.file-preview-show-img.tree-item.nav-file:has(> .nav-file-title.is-active) {
-  background-color: var(--nav-item-background-active);
-  border-radius: var(--radius-s);
-  box-shadow: 0 0 0 2px var(--background-modifier-border);
-}
-
-.file-preview-show-img.tree-item.nav-file:has(> .nav-file-title.has-focus) {
-  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
 
 .file-preview-show-img.tree-item.nav-file .nav-file-title {
   flex: 2;
 }
-.file-preview-show-img.tree-item.nav-file .nav-file-title.is-active,
-.file-preview-show-img.tree-item.nav-file .nav-file-title:hover {
-  background-color: unset;
-}
-
-body:not(.is-phone) .workspace-leaf.mod-active .file-preview-show-img.tree-item.nav-file .tree-item-self.has-focus {
-  box-shadow: unset;
-}
-
 .file-preview-show-img.tree-item.nav-file .tree-item-inner.nav-file-title-content {
   height: 1.6em;
   min-height: 1.6em;
@@ -79,7 +58,25 @@ body:not(.is-phone) .workspace-leaf.mod-active .file-preview-show-img.tree-item.
   height: 100%;
   background-size: cover;
   background-position: center;
-  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); */
+}
+/* 将原来的背景和边框隐藏，移动到子元素的背景和边框上 */
+body:not(.is-grabbing) .tree-item-self.is-clickable:hover,
+body:not(.is-grabbing) .nav-file-title.is-active,
+body:not(.is-grabbing) .nav-file-title:hover {
+  background-color: unset;
+}
+body:not(.is-phone) .workspace-leaf.mod-active .tree-item.nav-file .tree-item-self.has-focus {
+  box-shadow: unset;
+}
+.tree-item.nav-file:hover,
+.tree-item.nav-file:has(> .nav-file-title.is-active) {
+  background-color: var(--nav-item-background-active);
+  border-radius: var(--radius-s);
+  box-shadow: 0 0 0 2px var(--background-modifier-border);
+}
+
+.tree-item.nav-file:has(> .nav-file-title.has-focus) {
+  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
 
 .file-preview-show-img.tree-item.nav-file .tree-item-children {
