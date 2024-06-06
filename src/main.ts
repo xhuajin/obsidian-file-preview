@@ -1,5 +1,4 @@
 import { App, Plugin, PluginSettingTab, Setting, TFile, TFolder, View, WorkspaceLeaf, addIcon, normalizePath, setIcon } from 'obsidian';
-import { isAbsolute, relative, resolve } from 'path';
 
 declare module 'obsidian' {
   interface WorkspaceSidedock {
