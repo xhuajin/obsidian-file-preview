@@ -60,7 +60,7 @@
   background-position: center;
 }
 /* 将原来的背景和边框隐藏，移动到子元素的背景和边框上 */
-body:not(.is-grabbing) .tree-item-self.is-clickable:hover,
+body:not(.is-grabbing) .file-preview-show-img .tree-item-self.is-clickable:hover,
 body:not(.is-grabbing) .nav-file-title.is-active,
 body:not(.is-grabbing) .nav-file-title:hover {
   background-color: unset;
