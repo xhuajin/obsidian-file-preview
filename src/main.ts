@@ -180,10 +180,11 @@ export default class FilePreview extends Plugin {
         if (path === '/' || !(item.file instanceof TFile) || item.file.extension !== 'md') {
           continue;
         }
+        const file = item.file as TFile;
         await this.app.vault.cachedRead(item.file).then((contents) => {
           const formattedContents = this.formatContents(contents.trim());
           if (formattedContents) {
-            item.selfEl.classList.add('file-preview-nav-file-title');
+            item.selfEl.classList.add('fp-nav-file');
             this.previewContentsEl.push(item.selfEl.createEl('div', {
               text: formattedContents,
               attr: {
@@ -191,6 +192,18 @@ export default class FilePreview extends Plugin {
                 style: `-webkit-line-clamp: ${this.settings.lineClamp}; text-indent: ${this.settings.indents}em;`
               }
             }));
+            if (this.settings.showFileProperties) {
+              const ctime = moment(file.stat.ctime).format(this.settings.ctimeFormat);
+              const mtime = moment(file.stat.ctime).format(this.settings.mtimeFormat);
+              const timeInfoString = this.settings.propertiesFormat.replace('ctime', ctime).replace('mtime', mtime);
+
+              this.previewContentsEl.push(item.selfEl.createEl('div', {
+                text: timeInfoString,
+                attr: {
+                  class: 'nav-file-properties'
+                }
+              }));
+            }
           }
         });
       }
