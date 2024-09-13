@@ -1,4 +1,5 @@
-import { App, Plugin, PluginSettingTab, Setting, TFile, TFolder, View, WorkspaceLeaf, addIcon, normalizePath, setIcon } from 'obsidian';
+import { DEFAULT_SETTINGS, FilePreviewSettingTab, FilePreviewSettings } from './settings'
+import { Plugin, TFile, TFolder, View, WorkspaceLeaf, addIcon, moment, normalizePath, setIcon } from 'obsidian';
 
 declare module 'obsidian' {
   interface WorkspaceSidedock {
@@ -12,6 +13,7 @@ declare module 'obsidian' {
   }
   interface TFile {
     extension: string;
+    stat: FileStats;
   }
 }
 
@@ -22,16 +24,6 @@ interface FileItem {
   file: TFile | TFolder;
 }
 
-interface FilePreviewSettings {
-  showpreview: boolean;
-  lineClamp: number;
-  indents: number;
-  previewcontentslength: string;
-  ispreview: boolean;
-  format: FormatSetting;
-  showImg: boolean;
-}
-
 interface FileExplorerLeaf extends WorkspaceLeaf {
   view: FileExplorerView;
 }
@@ -40,18 +32,10 @@ interface FileExplorerView extends View {
   fileItems: { [path: string]: FileItem };
 }
 
-interface FormatSetting {
-  frontmatter: boolean;
-  bolditalic: boolean;
-  highlight: boolean;
-  codeblock: boolean;
-  quote: boolean;
-  blankline: boolean;
-  title: boolean;
-}
 
 export default class FilePreview extends Plugin {
   settings: FilePreviewSettings;
+  settingTab: FilePreviewSettingTab;
   fileExplorerView: FileExplorerView;
   fileNavEl: HTMLElement;
   showpreviewBtn: HTMLElement;
@@ -61,7 +45,8 @@ export default class FilePreview extends Plugin {
 
   async onload() {
     await this.loadSettings();
-    this.addSettingTab(new FilePreviewSettingTab(this.app, this));
+    this.settingTab = new FilePreviewSettingTab(this.app, this);
+    this.addSettingTab(this.settingTab);
 
     await this.initialize();
     this.addRibbonIcon('refresh-cw', 'Refresh preview contents', async () => {
@@ -73,7 +58,7 @@ export default class FilePreview extends Plugin {
     });
 
     this.ttl = 5;
-    
+
     addIcon('captions', '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-captions"><rect width="18" height="14" x="3" y="5" rx="2" ry="2"/><path d="M7 15h4M15 15h2M7 11h2M13 11h4"/></svg>');
     addIcon('captions-off', '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-captions-off"><path d="M10.5 5H19a2 2 0 0 1 2 2v8.5"/><path d="M17 11h-.5"/><path d="M19 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2"/><path d="m2 2 20 20"/><path d="M7 11h4"/><path d="M7 15h2.5"/></svg>')
 
@@ -101,7 +86,7 @@ export default class FilePreview extends Plugin {
         if (this.ttl <= 0) {
           return;
         }
-        // File Explorer pane may not be loaded yet
+        // File Explorer panel may not be loaded yet
         this.ttl -= 1;
         setTimeout(() => {
           this.initialize();
@@ -141,12 +126,13 @@ export default class FilePreview extends Plugin {
         if (path === '/' || !(item.file instanceof TFile) || item.file.extension !== 'md') {
           continue;
         }
-        
-        await this.app.vault.cachedRead(item.file).then((contents) => {
+        const file = item.file as TFile;
+        await this.app.vault.cachedRead(file).then((contents) => {
           const formattedContents = this.formatContents(contents.trim());
+
           let imgpath = this.getFirstImgPath(contents);
+          item.selfEl.classList.add('fp-nav-file');
           if (formattedContents) {
-            item.selfEl.classList.add('file-preview-nav-file-title');
             this.previewContentsEl.push(item.selfEl.createEl('div', {
               text: formattedContents,
               attr: {
@@ -154,6 +140,18 @@ export default class FilePreview extends Plugin {
                 style: `-webkit-line-clamp: ${this.settings.lineClamp}; text-indent: ${this.settings.indents}em;`
               }
             }));
+            if (this.settings.showFileProperties) {
+              const ctime = moment(file.stat.ctime).format(this.settings.ctimeFormat);
+              const mtime = moment(file.stat.ctime).format(this.settings.mtimeFormat);
+              const timeInfoString = this.settings.propertiesFormat.replace('ctime', ctime).replace('mtime', mtime);
+
+              this.previewContentsEl.push(item.selfEl.createEl('div', {
+                text: timeInfoString,
+                attr: {
+                  class: 'nav-file-properties'
+                }
+              }));
+            }
             if (imgpath) {
               item.el.classList.add('file-preview-show-img');
               const fileimg = item.el.createEl('div', {
@@ -217,6 +215,7 @@ export default class FilePreview extends Plugin {
   }
 
   public async deletePreviewContents() {
+    this.fileNavEl.classList.remove('file-preview-nav');
     this.previewContentsEl.forEach((el) => {
       el.remove();
     });
@@ -278,12 +277,12 @@ export default class FilePreview extends Plugin {
     const ImgMatch = contents.match(imgReg);
     if (ImgMatch) {
       const imgPath = ImgMatch[1] || ImgMatch[3];
-      if (imgPath.includes('|') ) {
+      if (imgPath.includes('|')) {
         return imgPath.split('|')[0];
       }
       return imgPath;
     }
-    
+
     return '';
   }
 
@@ -303,171 +302,5 @@ export default class FilePreview extends Plugin {
 
   public async saveSettings() {
     await this.saveData(this.settings);
-  }
-}
-
-const DEFAULT_SETTINGS: FilePreviewSettings = {
-  showpreview: true,
-  lineClamp: 2,
-  indents: 0,
-  previewcontentslength: '50',
-  ispreview: false,
-  format: {
-    frontmatter: true,
-    bolditalic: true,
-    highlight: true,
-    codeblock: true,
-    quote: true,
-    blankline: true,
-    title: true
-  },
-  showImg: true,
-}
-
-class FilePreviewSettingTab extends PluginSettingTab {
-  plugin: FilePreview;
-
-  constructor(app: App, plugin: FilePreview) {
-    super(app, plugin);
-    this.plugin = plugin;
-  }
-
-  display() {
-    const { containerEl } = this
-    containerEl.empty();
-
-    new Setting(containerEl)
-      .setName("Show preview contents")
-      .setDesc("Show preview contents in the file explorer.")
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.showpreview)
-        .onChange(async (value) => {
-          this.plugin.settings.showpreview = value;
-          if (value) {
-            await this.plugin.initialize();
-          } else {
-            await this.plugin.deletePreviewContents();
-          }
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName('Show image')
-      .setDesc("Show image in the preview contents from file content.")
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.showImg)
-        .onChange(async (value) => {
-          this.plugin.settings.showImg = value;
-          await this.plugin.refreshPreviewContents();
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName("Length of the preview contents.")
-      .setDesc("default: 50")
-      .addText(text => text
-        .setPlaceholder("50")
-        .setValue(this.plugin.settings.previewcontentslength)
-        .onChange(async (value) => {
-          this.plugin.settings.previewcontentslength = value;
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName("Line clamp")
-      .setDesc("The number of lines to show in the preview contents.(1 - 10, default: 2).")
-      .addSlider(slider => slider
-        .setLimits(1, 10, 1)
-        .setValue(this.plugin.settings.lineClamp)
-        .onChange(async (value) => {
-          this.plugin.settings.lineClamp = value;
-          await this.plugin.refreshPreviewContents();
-          await this.plugin.saveSettings();
-        })
-      )
-
-    new Setting(containerEl)
-      .setName('Indents of the preview contents')
-      .setDesc('The indents of the preview contents.')
-      .addSlider(slider => slider
-        .setLimits(0, 10, 1)
-        .setValue(this.plugin.settings.indents)
-        .onChange(async (value) => {
-          this.plugin.settings.indents = value;
-          await this.plugin.refreshPreviewContents();
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl).setName('Format preview contents').setHeading();
-        
-    new Setting(containerEl)
-      .setName("Remove frontmatter")
-      .setDesc("Remove frontmatter of the file.")
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.format.frontmatter)
-        .onChange(async (value) => {
-          this.plugin.settings.format.frontmatter = value;
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName("Remove bold and italic symbols")
-      .setDesc("Remove bold and italic symbols of the file.")
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.format.bolditalic)
-        .onChange(async (value) => {
-          this.plugin.settings.format.bolditalic = value;
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName("Remove highlight symbols")
-      .setDesc("Remove highlight symbols of the file.")
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.format.highlight)
-        .onChange(async (value) => {
-          this.plugin.settings.format.highlight = value;
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName("Remove code block")
-      .setDesc("Remove code block of the file.")
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.format.codeblock)
-        .onChange(async (value) => {
-          this.plugin.settings.format.codeblock = value;
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName("Remove quote")
-      .setDesc("Remove quote of the file.")
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.format.quote)
-        .onChange(async (value) => {
-          this.plugin.settings.format.quote = value;
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName("Remove blank line")
-      .setDesc("Remove blank line of the file.")
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.format.blankline)
-        .onChange(async (value) => {
-          this.plugin.settings.format.blankline = value;
-          await this.plugin.saveSettings();
-        }));
-
-    new Setting(containerEl)
-      .setName("Remove title symbol")
-      .setDesc("Remove title symbol of the file.")
-      .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.format.title)
-        .onChange(async (value) => {
-          this.plugin.settings.format.title = value;
-          await this.plugin.saveSettings();
-        }));
   }
 }

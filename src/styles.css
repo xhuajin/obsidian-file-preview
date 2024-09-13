@@ -1,84 +1,124 @@
-.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title {
-  flex-direction: column;
-  gap: 2px;
-  overflow: hidden;
+.file-preview-nav .tree-item-self.nav-file-title.fp-nav-file {
+	flex-direction: column;
+	gap: 2px;
+	overflow: hidden;
 }
 
-.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title::before{
-  content: none;
+.file-preview-nav .tree-item-self.nav-file-title.fp-nav-file::before {
+	content: none;
 }
 
-.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title .tree-item-inner.nav-file-title-content,
-.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title .tree-item-inner.nav-file-title-details {
-  flex: 1;
-  width: 100%;
-  font-weight: 500;
+.file-preview-nav
+	.tree-item-self.nav-file-title.fp-nav-file
+	.tree-item-inner.nav-file-title-content,
+.file-preview-nav
+	.tree-item-self.nav-file-title.fp-nav-file
+	.tree-item-inner.nav-file-title-details {
+	flex: 1;
+	width: 100%;
+	font-weight: 500;
 }
 
-.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title.is-active .tree-item-inner.nav-file-details,
-.file-preview-nav .file-preview-nav-file-title.tree-item-self.nav-file-title .tree-item-inner.nav-file-details {
-  display: -webkit-box;
-  white-space: normal;
-  word-break: break-all;
-  color: var(--nav-item-color);
-  font-size: var(--font-ui-smaller);
-  font-weight: 400;
-  -webkit-box-orient: vertical;
+.file-preview-nav
+	.tree-item-self.nav-file-title.fp-nav-file.is-active
+	.tree-item-inner.nav-file-details,
+.file-preview-nav
+	.tree-item-self.nav-file-title.fp-nav-file
+	.tree-item-inner.nav-file-details,
+.file-preview-nav
+	.tree-item-self.nav-file-title.fp-nav-file.is-active
+	.nav-file-properties,
+.file-preview-nav
+	.tree-item-self.nav-file-title.fp-nav-file
+	.nav-file-properties {
+	display: -webkit-box;
+	white-space: normal;
+	word-break: break-all;
+	color: var(--nav-item-color);
+	font-size: var(--font-ui-smaller);
+	font-weight: 400;
+	-webkit-box-orient: vertical;
 }
 
 /* Adaptation plugin novel-word-count's Right-aligned */
-.file-preview-nav.novel-word-count--note-right .nav-files-container .nav-file-title::after {
-  margin-left: auto;
+.file-preview-nav.novel-word-count--note-right
+	.nav-files-container
+	.nav-file-title.fp-nav-file::after {
+	margin-left: auto;
 }
 
-.file-preview-show-img.tree-item.nav-file {
-  display: flex;
-  margin: 10px 0;
+.file-preview-nav .file-preview-show-img.tree-item.nav-file {
+	display: flex;
+	margin: 10px 0;
 }
 
-.file-preview-show-img.tree-item.nav-file .nav-file-title {
-  flex: 2;
+.file-preview-nav
+	.file-preview-show-img.tree-item.nav-file
+	.nav-file-title.fp-nav-file {
+	flex: 2;
 }
-.file-preview-show-img.tree-item.nav-file .tree-item-inner.nav-file-title-content {
-  height: 1.6em;
-  min-height: 1.6em;
-  max-height: 1.6em;
-}
-
-.file-preview-show-img .tree-item-inner.tree-item-inner.nav-file-img {
-  display: flex;
-  margin: 10px;
-  flex: 1;
-  border-radius: var(--radius-s);
-  align-items: center;
+.file-preview-nav
+	.file-preview-show-img.tree-item.nav-file
+	.tree-item-inner.nav-file-title-content {
+	height: 1.6em;
+	min-height: 1.6em;
+	max-height: 1.6em;
 }
 
-.file-preview-show-img .tree-item-inner.tree-item-inner.nav-file-img .preview-img {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
+.file-preview-nav
+	.file-preview-show-img
+	.tree-item-inner.tree-item-inner.nav-file-img {
+	display: flex;
+	margin: 10px;
+	flex: 1;
+	border-radius: var(--radius-s);
+	align-items: center;
+}
+
+.file-preview-nav
+	.file-preview-show-img
+	.tree-item-inner.tree-item-inner.nav-file-img
+	.preview-img {
+	width: 100%;
+	height: 100%;
+	background-size: cover;
+	background-position: center;
 }
 /* 将原来的背景和边框隐藏，移动到子元素的背景和边框上 */
-body:not(.is-grabbing) .file-preview-show-img .tree-item-self.is-clickable:hover,
-body:not(.is-grabbing) .nav-file-title.is-active,
-body:not(.is-grabbing) .nav-file-title:hover {
-  background-color: unset;
+body:not(.is-grabbing)
+	.file-preview-nav
+	.file-preview-show-img
+	.tree-item-self.is-clickable:hover,
+body .tree-item-self.is-clickable.nav-file-title.is-active,
+body .tree-item-self.is-clickable.nav-file-title:hover {
+	background-color: unset;
 }
-body:not(.is-phone) .workspace-leaf.mod-active .tree-item.nav-file .tree-item-self.has-focus {
-  box-shadow: unset;
+body:not(.is-phone)
+	.workspace-leaf.mod-active
+	.file-preview-nav
+	.tree-item.nav-file
+	.tree-item-self.has-focus {
+	box-shadow: unset;
 }
-.tree-item.nav-file:hover,
-.tree-item.nav-file:has(> .nav-file-title.is-active) {
-  background-color: var(--nav-item-background-active);
-  border-radius: var(--radius-s);
-  box-shadow: 0 0 0 2px var(--background-modifier-border);
+.file-preview-nav .tree-item.nav-file:hover,
+.file-preview-nav
+	.tree-item.nav-file:has(> .nav-file-title.fp-nav-file.is-active) {
+	background-color: var(--nav-item-background-active);
+	border-radius: var(--radius-s);
+	box-shadow: 0 0 0 2px var(--background-modifier-border);
 }
 
-.tree-item.nav-file:has(> .nav-file-title.has-focus) {
-  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+.file-preview-nav
+	.tree-item.nav-file:has(> .nav-file-title.fp-nav-file.has-focus) {
+	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
 
-.file-preview-show-img.tree-item.nav-file .tree-item-children {
-  display: none;
+.file-preview-nav
+	.file-preview-show-img.tree-item.nav-file
+	.tree-item-children {
+	display: none;
+}
+
+.file-preview-nav .nav-file-properties {
+	margin-top: 0.25rem;
 }
