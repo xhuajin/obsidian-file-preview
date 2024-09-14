@@ -1,6 +1,6 @@
 {
 	"name": "file-preview",
-	"version": "1.0.0",
+	"version": "1.1.1",
 	"description": "Add file preview contents under file in file explorer.",
 	"main": "main.js",
 	"scripts": {
