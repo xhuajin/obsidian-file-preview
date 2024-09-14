@@ -142,7 +142,7 @@ export default class FilePreview extends Plugin {
             }));
             if (this.settings.showFileProperties) {
               const ctime = moment(file.stat.ctime).format(this.settings.ctimeFormat);
-              const mtime = moment(file.stat.ctime).format(this.settings.mtimeFormat);
+              const mtime = moment(file.stat.mtime).format(this.settings.mtimeFormat);
               const timeInfoString = this.settings.propertiesFormat.replace('ctime', ctime).replace('mtime', mtime);
 
               this.previewContentsEl.push(item.selfEl.createEl('div', {
