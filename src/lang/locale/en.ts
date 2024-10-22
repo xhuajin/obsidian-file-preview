@@ -11,6 +11,10 @@ export default {
   'The number of lines to show in the preview contents.(1 - 10, default: 2).': 'The number of lines to show in the preview contents.(1 - 10, default: 2).',
   'Indents of the preview contents': 'Indents of the preview contents',
   'The indents of the preview contents.': 'The indents of the preview contents.',
+  'Exclude special file/folder': 'Exclude special file/folder',
+  'Path to file/folder that you want to exclude. Split multiple paths with line breaks.': 'Path to file that you want to exclude. Split multiple paths with line breaks.',
+  'path/to/file.md or path/to/folder': 'path/to/file.md or path/to/folder',
+
   'Format preview contents': 'Format preview contents',
   'Remove frontmatter': 'Remove frontmatter',
   'Remove frontmatter of the file.': 'Remove frontmatter of the file.',
@@ -26,6 +30,14 @@ export default {
   'Remove blank line of the file.': 'Remove blank line of the file.',
   'Remove title symbol': 'Remove title symbol',
   'Remove title symbol of the file.': 'Remove title symbol of the file.',
+  'Remove first h1': 'Remove first h1',
+  'Remove the first heading 1 of the file.': 'Remove the first heading 1 of the file.',
+  'Remove first h2': 'Remove first h2',
+  'Remove the first heading 2 of the file.': 'Remove the first heading 2 of the file.',
+  'Custom remove rules': 'Custom remove rules',
+  'Custom regular expression formatting preview text will be applied at the end. Split multiple expressions with line breaks.': 'Custom regular expression formatting preview text will be applied at the end. Split multiple expressions with line breaks.',
+  'The content that you want to delete.': 'The content that you want to delete.',
+
   'File properties': 'File properties',
   'Display properties': 'Display properties',
   'Display file properties under detaile message. For example, created time, updated time, file size.': 'Display file properties under detaile message. For example, created time, updated time, file size.',
@@ -36,4 +48,5 @@ export default {
   'Properties format': 'Properties format',
   "Format of the file properties. Use 'ctime' and 'mtime'.": "Format of the file properties. Use 'ctime' and 'mtime'.",
   'Reset to default': 'Reset to default',
+
 };

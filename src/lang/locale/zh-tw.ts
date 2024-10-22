@@ -11,6 +11,10 @@ export default {
   'The number of lines to show in the preview contents.(1 - 10, default: 2).': '預覽內容行數限制(1-10, 預設2).',
   'Indents of the preview contents': '預覽內容縮進',
   'The indents of the preview contents.': '預覽內容縮進',
+  'Exclude special file/folder': '排除特定文件/文件夾',
+  'Path to file/folder that you want to exclude. Split multiple paths with line breaks.': '被排除的文件/文件夾路徑，換行分割多個路徑',
+  'path/to/file.md or path/to/folder': 'path/to/file.md or path/to/folder',
+
   'Format preview contents': '格式化預覽內容',
   'Remove frontmatter': '刪除 frontmatter',
   'Remove frontmatter of the file.': '刪除文件的 frontmatter',
@@ -26,6 +30,14 @@ export default {
   'Remove blank line of the file.': '刪除文件的空行',
   'Remove title symbol': '刪除標題符號',
   'Remove title symbol of the file.': '刪除文件的標題符號',
+  'Remove first h1': '刪除第一個 h1',
+  'Remove the first heading 1 of the file.': '刪除文件的第一個一級標題',
+  'Remove first h2': '刪除第一個 h2',
+  'Remove the first heading 2 of the file.': '刪除文件的第一個二級標題',
+  'Custom remove rules': '自定義刪除規則',
+  'Custom regular expression formatting preview text will be applied at the end. Multiple expressions can be wrapped': '自定義正則表達式格式化預覽文本，會在最後應用。多個表達式換行即可',
+  'The content that you want to delete.': '你想刪除的內容',
+
   'File properties': '文件屬性',
   'Display properties': '顯示屬性',
   'Display file properties under detaile message. For example, created time, updated time, file size.': '在詳細信息中顯示文件屬性. 例如, 創建時間, 更新時間, 文件大小.',
@@ -36,4 +48,5 @@ export default {
   'Properties format': '屬性格式',
   "Format of the file properties. Use 'ctime' and 'mtime'.": "屬性格式. 使用 'ctime' 和 'mtime'.",
   'Reset to default': '重設為預設',
+
 };

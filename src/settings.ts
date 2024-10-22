@@ -15,6 +15,7 @@ export interface FilePreviewSettings {
   ctimeFormat: string;
   mtimeFormat: string;
   propertiesFormat: string;
+  excluded: string[];
 }
 
 export const DEFAULT_SETTINGS: FilePreviewSettings = {
@@ -30,13 +31,17 @@ export const DEFAULT_SETTINGS: FilePreviewSettings = {
     codeblock: true,
     quote: true,
     blankline: true,
-    title: true
+    title: true,
+    firsth1: true,
+    firsth2: false,
+    customregex: [],
   },
   showImg: true,
   showFileProperties: false,
   ctimeFormat: 'YYYY-MM-DD HH:mm:ss',
   mtimeFormat: 'YYYY-MM-DD HH:mm:ss',
-  propertiesFormat: `${t('created at')} ctime, ${t('updated at')} mtime`
+  propertiesFormat: `${t('created at')} ctime, ${t('updated at')} mtime`,
+  excluded: [],
 }
 
 interface FormatSetting {
@@ -47,6 +52,9 @@ interface FormatSetting {
   quote: boolean;
   blankline: boolean;
   title: boolean;
+  firsth1: boolean;
+  firsth2: boolean;
+  customregex: string[];
 }
 
 export class FilePreviewSettingTab extends PluginSettingTab {
@@ -126,6 +134,19 @@ export class FilePreviewSettingTab extends PluginSettingTab {
         .setDynamicTooltip()
       )
 
+    new Setting(containerEl)
+      .setName(t('Exclude special file/folder'))
+      .setDesc(t('Path to file/folder that you want to exclude. Split multiple paths with line breaks.'))
+      .addTextArea(text => text
+        .setPlaceholder('path/to/file.md or path/to/folder')
+        .setValue(this.plugin.settings.excluded.join('\n'))
+        .onChange(async (value) => {
+          this.plugin.settings.excluded = value.trim().split('\n');
+          await this.plugin.saveSettings();
+          await this.plugin.refreshPreviewContents();
+        }));
+
+    // Format preview contents
     new Setting(containerEl).setName(t('Format preview contents')).setHeading();
 
     new Setting(containerEl)
@@ -198,6 +219,38 @@ export class FilePreviewSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
+    new Setting(containerEl)
+      .setName(t("Remove first h1"))
+      .setDesc(t("Remove the first heading 1 of the file."))
+      .addToggle(toggle => toggle
+        .setValue(this.plugin.settings.format.firsth1)
+        .onChange(async (value) => {
+          this.plugin.settings.format.firsth1 = value;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName(t("Remove first h2"))
+      .setDesc(t("Remove the first heading 2 of the file."))
+      .addToggle(toggle => toggle
+        .setValue(this.plugin.settings.format.firsth2)
+        .onChange(async (value) => {
+          this.plugin.settings.format.firsth2 = value;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName(t("Custom remove rules"))
+      .setDesc(t("Custom regular expression formatting preview text will be applied at the end. Split multiple expressions with line breaks."))
+      .addTextArea(text => text
+        .setPlaceholder("The content that you want to delete.")
+        .setValue(this.plugin.settings.format.customregex?.join('\n') ?? "")
+        .onChange(async (value) => {
+          this.plugin.settings.format.customregex = value.trim().split('\n');
+          await this.plugin.saveSettings();
+        }));
+
+    // File Properties
     new Setting(containerEl).setName(t('File properties')).setHeading();
 
     new Setting(containerEl)
@@ -245,6 +298,8 @@ export class FilePreviewSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }))
       .then((settingEl) => this.addResetButton(settingEl, 'propertiesFormat'))
+
+
   }
 
   addResetButton(settingElement: Setting, settingKey: string, refreshView = true) {
